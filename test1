@@ -1,0 +1,118 @@
+#include <stdint.h>
+#include <stdbool.h>
+#include "inc/tm4c123gh6pm.h"
+#include "inc/hw_memmap.h"
+#include "driverlib/sysctl.h"
+#include "driverlib/gpio.h"
+#include "driverlib/interrupt.h"
+#include "driverlib/uart.h"
+#include "driverlib/timer.h"
+#include "driverlib/pin_map.h"
+
+// UART buffer
+#define BUFFER_SIZE 256
+char gpsBuffer[BUFFER_SIZE];
+volatile int bufferIndex = 0;
+volatile bool sentenceComplete = false;
+
+// UART1 interrupt handler (GPS module)
+void UARTIntHandler(void)
+{
+    uint32_t ui32Status;
+    char receivedChar;
+
+    // Get interrupt status
+    ui32Status = UARTIntStatus(UART1_BASE, true);
+
+    // Clear the asserted interrupts
+    UARTIntClear(UART1_BASE, ui32Status);
+
+    // Loop while there are characters available in the UART FIFO
+    while (UARTCharsAvail(UART1_BASE))
+    {
+        receivedChar = UARTCharGetNonBlocking(UART1_BASE);
+
+        // Echo the received character to UART0 (debugging)
+        UARTCharPutNonBlocking(UART0_BASE, receivedChar);
+
+        // Store the received character in the GPS buffer
+        if (!sentenceComplete)
+        {
+            gpsBuffer[bufferIndex++] = receivedChar;
+
+            // Check for buffer overflow
+            if (bufferIndex >= BUFFER_SIZE)
+            {
+                bufferIndex = 0; // Reset buffer if overflow
+            }
+
+            // Check if the sentence is complete (NMEA ends with '\n')
+            if (receivedChar == '\n')
+            {
+                sentenceComplete = true;
+                gpsBuffer[bufferIndex] = '\0'; // Null-terminate the string
+                bufferIndex = 0; // Reset buffer for next sentence
+                printf(gpsBuffer);
+            }
+        }
+    }
+}
+
+int main(void)
+{
+    // Step 1: Set system clock to 40 MHz
+    SysCtlClockSet(SYSCTL_SYSDIV_5 | SYSCTL_USE_PLL | SYSCTL_XTAL_16MHZ | SYSCTL_OSC_MAIN);
+
+    // Step 2: Enable peripherals for UART0 (PC) and UART1 (GPS module)
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA); // GPIO for UART0
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_UART1);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB); // GPIO for UART1
+
+    // Step 3: Configure GPIO pins for UART0 (USB-to-PC communication)
+    GPIOPinConfigure(GPIO_PA0_U0RX);
+    GPIOPinConfigure(GPIO_PA1_U0TX);
+    GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
+
+    // Step 4: Configure GPIO pins for UART1 (GPS communication)
+    GPIOPinConfigure(GPIO_PB0_U1RX);  // GPS TX to TIVA RX
+    GPIOPinConfigure(GPIO_PB1_U1TX);  // GPS RX (optional, not typically used)
+    GPIOPinTypeUART(GPIO_PORTB_BASE, GPIO_PIN_0 | GPIO_PIN_1);
+
+    // Step 5: Configure UART0 (serial monitor)
+    UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 9600,
+                        (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
+
+    // Step 6: Configure UART1 (GPS module)
+    UARTConfigSetExpClk(UART1_BASE, SysCtlClockGet(), 9600,
+                        (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
+
+    // Step 7: Enable UART1 interrupt
+    UARTIntRegister(UART1_BASE, UARTIntHandler);
+    IntEnable(INT_UART1);
+    UARTIntEnable(UART1_BASE, UART_INT_RX | UART_INT_RT);
+    IntMasterEnable();
+
+    while (1)
+    {
+        // Main loop: Check if a full GPS sentence has been received
+        if (sentenceComplete)
+        {
+            // Process the GPS sentence (e.g., parse $GPGGA or $GPRMC)
+            if (strncmp(gpsBuffer, "$GPGGA", 6) == 0)
+            {
+                // Example: Process GPGGA sentence
+                UARTCharPut(UART0_BASE, 'G'); // Debugging: Indicate GPGGA detected
+            }
+            else if (strncmp(gpsBuffer, "$GPRMC", 6) == 0)
+            {
+                // Example: Process GPRMC sentence
+                UARTCharPut(UART0_BASE, 'R'); // Debugging: Indicate GPRMC detected
+            }
+
+            // Clear the sentenceComplete flag after processing
+            sentenceComplete = false;
+        }
+    }
+}
+
