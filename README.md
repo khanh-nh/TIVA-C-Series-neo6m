@@ -9,9 +9,9 @@ LCD (+) -> VBUS\
 LCD (-) -> GND\
 LCD (SDA) -> PB1\
 LCD (SCL) -> PB0\
-GPS (TX) -> PBO (RX)\
+GPS (TX) -> PB0 (RX)\
 GPS (+) -> 3.3V\
 GPS (-) -> GND
 
-** Contact: 
+** Contact: \
 22khanh.nh@vinuni.edu.vn
