@@ -197,7 +197,7 @@ void I2C3Init(void) {
 
 
 
- int main(void) {
+int main(void) {
     // Configure system clock to 40 MHz
     SysCtlClockSet(SYSCTL_SYSDIV_20 | SYSCTL_USE_PLL | SYSCTL_XTAL_16MHZ | SYSCTL_OSC_MAIN);
 
@@ -278,13 +278,13 @@ void I2C3Init(void) {
             LCD1602Goto(0, 0);
 
 
-            int int_distance = 5678;
+            int int_distance = calculated_distance;
             sprintf(str, "Distance: %d", int_distance);
             //LCD1602SetString(str);
             //SysCtlDelay(SysCtlClockGet() / 3);
             LCD1602SetString(str);
 
-            if (calculated_distance > 10) {
+            if (calculated_distance > 20) {
                             BuzzerOn(); // Turn on the buzzer
                         } else {
                             BuzzerOff(); // Turn off the buzzer
