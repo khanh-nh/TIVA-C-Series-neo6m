@@ -11,4 +11,7 @@ LCD (SDA) -> PB1\
 LCD (SCL) -> PB0\
 GPS (TX) -> PBO (RX)\
 GPS (+) -> 3.3V\
-GPS (-) -> GND\
+GPS (-) -> GND
+
+** Contact: 
+22khanh.nh@vinuni.edu.vn
