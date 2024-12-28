@@ -13,5 +13,6 @@ GPS (TX) -> PB0 (RX)\
 GPS (+) -> 3.3V\
 GPS (-) -> GND
 
-** Contact: \
+** Contacts: ** \
 22khanh.nh@vinuni.edu.vn
+22dan.bd@vinuni.edu.vn
