@@ -15,8 +15,8 @@ Buzzer (+) -> PF3\
 Buzzer (-) -> GND\
 LCD (+) -> VBUS\
 LCD (-) -> GND\
-LCD (SDA) -> PB1\
-LCD (SCL) -> PB0\
+LCD (SDA) -> PD1\
+LCD (SCL) -> PD0\
 GPS (TX) -> PB0 (RX)\
 GPS (+) -> 3.3V\
 GPS (-) -> GND
