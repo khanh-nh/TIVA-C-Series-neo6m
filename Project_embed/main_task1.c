@@ -184,10 +184,7 @@ int validateChecksum(const char *sentence) {
     {
         checksum ^= *ptr;
     }
-
-
-
-    unsigned int receivedChecksum;
+  unsigned int receivedChecksum;
     sscanf(asterisk + 1, "%x", &receivedChecksum);
     return checksum == receivedChecksum;
 }
