@@ -5,7 +5,11 @@
 #include "driverlib/gpio.h"
 #include "driverlib/systick.h"
 #include "driverlib/pin_map.h"
-
+//Pin map on Tiva C board
+  // Rs   -> A5
+  // Rw   -> A6
+  // E    -> A7
+  //D0 - D7 (Data) -> B0-B7
 // Pin configurations for LCD
 #define LCD_RS GPIO_PIN_5  // Register Select
 #define LCD_RW GPIO_PIN_6  // Read/Write
