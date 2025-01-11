@@ -66,15 +66,15 @@ void calculateDistance(double lat1, double lon1, double lat2, double lon2) {
 }
 void SysTickIntHandler(void)
 {
-//    LCD1602Clear();
-//    int int_distance = calculated_distance; // Assuming calculated_distance is a valid double
-//    char distance_str[16];                  // Buffer to hold the string representation
-//
-//    // Convert integer to string
-//    sprintf(distance_str, "%d", int_distance);
-//
-//    // Pass the string to LCD1602SetString
-//    LCD1602SetString(distance_str);
+   LCD1602Clear();
+   int int_distance = calculated_distance; // Assuming calculated_distance is a valid double
+   char distance_str[16];                  // Buffer to hold the string representation
+
+   // Convert integer to string
+   sprintf(distance_str, "%d", int_distance);
+
+   // Pass the string to LCD1602SetString
+   LCD1602SetString(distance_str);
 }
 // UART Interrupt Handler
 void UARTIntHandler(void) {
