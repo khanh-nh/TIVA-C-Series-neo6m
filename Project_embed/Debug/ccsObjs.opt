@@ -1,0 +1,7 @@
+"./lcd1602_i2c.obj"
+"./main_task1.obj"
+"./tm4c123gh6pm_startup_ccs.obj"
+"./libs/i2c/i2c.obj"
+"C:/ti/TivaWare_C_Series-1.1/driverlib/ccs/Debug/driverlib.lib"
+"../tm4c123gh6pm.cmd"
+-llibc.a
