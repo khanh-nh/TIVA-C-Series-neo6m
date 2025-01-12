@@ -2,7 +2,7 @@
  * i2c.c
  *
  *  Created on: 7 Oct 2024
- *      Author: minht57
+ *      
  */
 
 #include <stdbool.h>
